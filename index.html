@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>We are Humans - Gestión de Talento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Librería para Gráficos Dinámicos -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #111827; /* Fondo oscuro principal */
+            color: #d1d5db; /* Texto principal claro */
+        }
+        /* Colores inspirados en el logo para tema oscuro */
+        .primary-color { color: #2dd4bf; } /* Turquesa principal */
+        .primary-bg { background-color: #2dd4bf; }
+        .secondary-color { color: #5eead4; } /* Turquesa más claro */
+        .secondary-bg { background-color: #0d9488; } /* Turquesa oscuro */
+        .accent-color { color: #99f6e4; } /* Verde/Turquesa muy claro */
+        
+        .hero-section {
+            background: linear-gradient(rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 0.7)), url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2940&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Efecto Parallax sutil */
+        }
+        .logo-image {
+            max-height: 80px; /* Ajustado para un look más fino */
+            width: auto;
+        }
+
+        header {
+            background-color: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #374151;
+        }
+        nav a {
+            position: relative;
+            color: #9ca3af;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: #2dd4bf;
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2dd4bf;
+            transition: width 0.3s ease;
+        }
+        nav a:hover::after {
+            width: 100%;
+        }
+        #mobile-menu {
+            background-color: #1f2937;
+        }
+
+        .service-card {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(45, 212, 191, 0.1), 0 10px 10px -5px rgba(45, 212, 191, 0.08);
+        }
+        .service-card h3 { color: #5eead4; }
+        .service-card p { color: #9ca3af; }
+        .service-card .icon { color: #2dd4bf; }
+
+        .btn-primary {
+            background-color: #14b8a6;
+            color: #ffffff;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0d9488;
+            transform: scale(1.05);
+        }
+        .btn-secondary {
+            background-color: transparent;
+            color: #2dd4bf;
+            border: 2px solid #2dd4bf;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #2dd4bf;
+            color: #111827;
+            transform: scale(1.05);
+        }
+
+        .section-title { color: #5eead4; }
+        .section-title::after {
+            content: ''; display: block; width: 60px; height: 4px;
+            background-color: #2dd4bf; margin: 10px auto 0; border-radius: 2px;
+        }
+        
+        #carga-cv { background-color: #0f766e; }
+
+        #contacto .contact-card {
+            background-color: #1f2937; border: 1px solid #374151;
+        }
+        #contacto h2, #contacto h4 { color: #5eead4; }
+        #contacto p, #contacto a { color: #9ca3af; }
+        #contacto a:hover { color: #2dd4bf; }
+        #contacto .icon { color: #2dd4bf; }
+
+        footer { background-color: #1f2937; border-top: 1px solid #374151; }
+        footer a:hover { color: #2dd4bf; }
+
+        /* Animaciones */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-1 { transition-delay: 0.2s; }
+        .delay-2 { transition-delay: 0.4s; }
+        .delay-3 { transition-delay: 0.6s; }
+        
+        /* Estilos para el gráfico */
+        #diag-chart { min-height: 350px; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#inicio" class="logo-container">
+                <img src="https://i.postimg.cc/QMVpsNYf/logo-WRH-Editado.png" alt="We are Humans Gestión de Talento Logo" class="logo-image">
+            </a>
+            <nav class="space-x-8 hidden md:flex">
+                <a href="#inicio">Inicio</a>
+                <a href="#servicios">Servicios</a>
+                <a href="#nosotros">Nosotros</a>
+                <a href="#carga-cv">Carga tu CV</a>
+                <a href="#contacto">Contacto</a>
+            </nav>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-400 hover:text-primary-color focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden py-2">
+            <a href="#inicio" class="block px-6 py-2 text-gray-400 hover:bg-gray-700 hover:text-primary-color rounded">Inicio</a>
+            <a href="#servicios" class="block px-6 py-2 text-gray-400 hover:bg-gray-700 hover:text-primary-color rounded">Servicios</a>
+            <a href="#nosotros" class="block px-6 py-2 text-gray-400 hover:bg-gray-700 hover:text-primary-color rounded">Nosotros</a>
+            <a href="#carga-cv" class="block px-6 py-2 text-gray-400 hover:bg-gray-700 hover:text-primary-color rounded">Carga tu CV</a>
+            <a href="#contacto" class="block px-6 py-2 text-gray-400 hover:bg-gray-700 hover:text-primary-color rounded">Contacto</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="inicio" class="hero-section text-white py-24 md:py-40">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-6 reveal">Potenciamos el Talento, Transformamos Organizaciones</h1>
+                <p class="text-lg md:text-xl mb-8 max-w-3xl mx-auto reveal delay-1">En <span class="font-semibold primary-color">We are Humans</span>, conectamos personas y estrategias para construir el futuro del trabajo.</p>
+                <a href="#servicios" class="btn-primary py-3 px-8 rounded-full text-lg font-semibold reveal delay-2">Descubre Nuestros Servicios</a>
+            </div>
+        </section>
+
+        <section id="servicios" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 section-title reveal">Nuestros Servicios</h2>
+                <p class="text-center text-gray-400 mb-12 md:mb-16 max-w-2xl mx-auto reveal delay-1">
+                    Ofrecemos soluciones integrales y personalizadas para la gestión del talento y el desarrollo organizacional.
+                </p>
+                <div class="grid md:grid-cols-3 gap-8 mb-20">
+                    <div class="service-card p-8 rounded-xl shadow-lg reveal delay-1">
+                        <div class="text-4xl icon mb-6 text-center"><i class="fas fa-sync-alt"></i></div>
+                        <h3 class="text-2xl font-semibold mb-3 text-center">Gestión del Cambio</h3>
+                        <p class="text-sm leading-relaxed">Acompañamos a tu organización en procesos de transformación, asegurando una transición fluida y minimizando la resistencia.</p>
+                    </div>
+                    <div class="service-card p-8 rounded-xl shadow-lg reveal delay-2">
+                        <div class="text-4xl icon mb-6 text-center"><i class="fas fa-users-cog"></i></div>
+                        <h3 class="text-2xl font-semibold mb-3 text-center">Cultura Organizacional</h3>
+                        <p class="text-sm leading-relaxed">Ayudamos a definir e implementar la cultura de tu empresa, creando entornos de trabajo positivos, productivos y alineados con tus valores.</p>
+                    </div>
+                    <div class="service-card p-8 rounded-xl shadow-lg reveal delay-3">
+                        <div class="text-4xl icon mb-6 text-center"><i class="fas fa-user-check"></i></div>
+                        <h3 class="text-2xl font-semibold mb-3 text-center">Reclutamiento y Selección</h3>
+                        <p class="text-sm leading-relaxed">Encontramos el talento ideal para tu equipo con metodologías innovadoras que garantizan un proceso eficiente y resultados de calidad.</p>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN MEJORADA DE DIAGNÓSTICO ORGANIZACIONAL -->
+                <div class="mt-20 pt-20 border-t border-gray-700">
+                    <div class="text-center mb-12">
+                        <h3 class="text-3xl md:text-4xl font-bold section-title reveal">Servicio Destacado: Diagnóstico Organizacional</h3>
+                        <p class="text-center text-gray-400 mt-8 max-w-3xl mx-auto reveal delay-1">Una inmersión profunda en el ADN de tu empresa para desbloquear su máximo potencial. Tomamos el pulso de tu organización para ofrecerte una hoja de ruta clara hacia el éxito.</p>
+                    </div>
+                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+                        <div class="reveal">
+                            <h4 class="text-2xl font-semibold mb-6 secondary-color">¿Qué analizamos?</h4>
+                            <ul class="space-y-4 text-gray-300">
+                                <li class="flex items-start"><i class="fas fa-chart-pie text-xl primary-color mt-1 mr-4"></i><div><strong>Cultura y Clima Laboral:</strong> Medimos la satisfacción y el compromiso.</div></li>
+                                <li class="flex items-start"><i class="fas fa-sitemap text-xl primary-color mt-1 mr-4"></i><div><strong>Estructura y Procesos:</strong> Identificamos cuellos de botella y optimizamos flujos.</div></li>
+                                <li class="flex items-start"><i class="fas fa-comments text-xl primary-color mt-1 mr-4"></i><div><strong>Comunicación Interna:</strong> Evaluamos la efectividad de los canales de comunicación.</div></li>
+                                <li class="flex items-start"><i class="fas fa-star text-xl primary-color mt-1 mr-4"></i><div><strong>Liderazgo y Gestión:</strong> Analizamos los estilos de liderazgo y su impacto.</div></li>
+                            </ul>
+                            <div class="mt-8 grid grid-cols-2 gap-6 text-center">
+                                <div class="reveal">
+                                    <p class="text-4xl font-bold primary-color" data-target="95">0</p>
+                                    <p class="text-gray-400">Precisión en Datos</p>
+                                </div>
+                                <div class="reveal delay-1">
+                                    <p class="text-4xl font-bold primary-color" data-target="30">0</p>
+                                    <p class="text-gray-400">% de Aumento en Eficiencia</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="reveal delay-2">
+                             <div id="diag-chart"></div> <!-- Contenedor para el gráfico -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="nosotros" class="py-16 md:py-24 bg-gray-900">
+            <div class="container mx-auto px-6">
+                <div class="flex flex-col md:flex-row items-center gap-12">
+                    <div class="md:w-1/2 reveal">
+                        <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2832&auto=format&fit=crop" alt="Equipo We are Humans" class="rounded-xl shadow-xl">
+                    </div>
+                    <div class="md:w-1/2 reveal delay-1">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6 section-title !mx-0 !text-left">Quiénes Somos</h2>
+                        <p class="mb-4 leading-relaxed">
+                            En <span class="font-semibold primary-color">We are Humans Gestión de Talento</span>, creemos en el poder de las personas para impulsar el éxito. Somos un equipo de profesionales apasionados por los Recursos Humanos, dedicados a ofrecer soluciones innovadoras y estratégicas.
+                        </p>
+                        <p class="mb-6 leading-relaxed">
+                           Nuestro enfoque se centra en entender profundamente las necesidades de cada cliente para diseñar estrategias a medida, integrando las últimas tendencias y tecnología para optimizar la gestión del talento.
+                        </p>
+                        <a href="#contacto" class="btn-secondary py-2 px-6 rounded-full font-semibold">Contáctanos</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="carga-cv" class="py-16 md:py-24 text-white">
+            <div class="container mx-auto px-6 text-center">
+                <div class="text-5xl mb-6 reveal"><i class="fas fa-file-invoice"></i></div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 reveal delay-1">¿Buscas Nuevos Desafíos?</h2>
+                <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto reveal delay-2">
+                    Forma parte de nuestra base de talentos. Envíanos tu currículum y déjanos conocerte.
+                </p>
+                <a href="mailto:weare.humans.rrhh@gmail.com?subject=Postulación%20CV%20-%20[Escribe%20tu%20Nombre%20Aquí]"
+                   class="btn-primary py-3 px-8 rounded-full text-lg font-semibold inline-block reveal delay-3">
+                    <i class="fas fa-paper-plane mr-2"></i>Envía tu CV Ahora
+                </a>
+            </div>
+        </section>
+
+        <section id="contacto" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 section-title reveal">Hablemos</h2>
+                <div class="max-w-3xl mx-auto p-8 md:p-12 rounded-xl shadow-xl reveal delay-1 contact-card">
+                    <p class="text-center mb-8">
+                        Estamos listos para ayudarte. Contáctanos para conocer más sobre nuestros servicios.
+                    </p>
+                    <div class="grid md:grid-cols-3 gap-8 text-center">
+                        <div class="reveal delay-1">
+                            <div class="text-3xl icon mb-3"><i class="fas fa-phone-alt"></i></div>
+                            <h4 class="text-xl font-semibold mb-1">Teléfono</h4>
+                            <a href="tel:+5493874651080" class="transition duration-300">(387) 465-1080</a>
+                        </div>
+                        <div class="reveal delay-2">
+                            <div class="text-3xl icon mb-3"><i class="fas fa-envelope"></i></div>
+                            <h4 class="text-xl font-semibold mb-1">Email</h4>
+                            <a href="mailto:weare.humans.rrhh@gmail.com" class="transition duration-300 break-all">weare.humans.rrhh@gmail.com</a>
+                        </div>
+                        <div class="reveal delay-3">
+                            <div class="text-3xl icon mb-3"><i class="fab fa-instagram"></i></div>
+                            <h4 class="text-xl font-semibold mb-1">Instagram</h4>
+                            <a href="https://www.instagram.com/weare_humans25/" target="_blank" rel="noopener noreferrer" class="transition duration-300">@weare_humans25</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-12">
+        <div class="container mx-auto px-6 text-center text-gray-400">
+            <div class="mb-4">
+                <a href="https://www.instagram.com/weare_humans25/" target="_blank" rel="noopener noreferrer" class="text-2xl mx-3 transition duration-300"><i class="fab fa-instagram"></i></a>
+                <a href="mailto:weare.humans.rrhh@gmail.com" class="text-2xl mx-3 transition duration-300"><i class="fas fa-envelope"></i></a>
+                <a href="tel:+5493874651080" class="text-2xl mx-3 transition duration-300"><i class="fas fa-phone-alt"></i></a>
+            </div>
+            <p class="text-sm">&copy; <span id="currentYear"></span> We are Humans Gestión de Talento. Todos los derechos reservados.</p>
+            <p class="text-xs mt-1 opacity-70">Salta, Argentina.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Menú móvil
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            document.querySelectorAll('#mobile-menu a, .logo-container a, a[href^="#"]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (link.getAttribute('href').startsWith('#')) {
+                       e.preventDefault();
+                       const targetId = link.getAttribute('href');
+                       const targetElement = document.querySelector(targetId);
+                       if (targetElement) {
+                           targetElement.scrollIntoView({ behavior: 'smooth' });
+                       }
+                    }
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Año actual
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Animación al hacer scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        
+                        // Si el elemento es un contador, lo animamos
+                        const counter = entry.target.querySelector('[data-target]');
+                        if (counter) {
+                            animateCounter(counter);
+                        }
+                        
+                        // Si el elemento es el gráfico, lo renderizamos
+                        if(entry.target.id === 'diag-chart'){
+                            renderChart();
+                        }
+                        
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+            const chartEl = document.getElementById('diag-chart');
+            if (chartEl) {
+                observer.observe(chartEl);
+            }
+
+            // Función para animar contadores
+            function animateCounter(element) {
+                const target = +element.dataset.target;
+                const duration = 1500;
+                let start = 0;
+                const stepTime = 20; // ms
+                const totalSteps = duration / stepTime;
+                const increment = target / totalSteps;
+
+                const timer = setInterval(() => {
+                    start += increment;
+                    if (start >= target) {
+                        element.textContent = target;
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = Math.ceil(start);
+                    }
+                }, stepTime);
+            }
+
+            // Función para renderizar el gráfico dinámico
+            function renderChart() {
+                const options = {
+                    chart: {
+                        type: 'radar',
+                        height: 400,
+                        toolbar: { show: false },
+                        animations: { enabled: true, easing: 'easeinout', speed: 800 }
+                    },
+                    series: [{
+                        name: 'Puntuación del Diagnóstico',
+                        data: [85, 90, 70, 78, 65, 80],
+                    }],
+                    xaxis: {
+                        categories: ['Cultura', 'Liderazgo', 'Procesos', 'Comunicación', 'Estructura', 'Compromiso'],
+                        labels: {
+                            style: {
+                                colors: ['#9ca3af', '#9ca3af', '#9ca3af', '#9ca3af', '#9ca3af', '#9ca3af'],
+                                fontSize: '14px'
+                            }
+                        }
+                    },
+                    yaxis: { show: false },
+                    stroke: {
+                        width: 2,
+                        colors: ['#2dd4bf']
+                    },
+                    fill: {
+                        opacity: 0.2,
+                        colors: ['#2dd4bf']
+                    },
+                    markers: {
+                        size: 4,
+                        colors: ['#fff'],
+                        strokeColor: '#2dd4bf',
+                        strokeWidth: 2,
+                    },
+                    tooltip: {
+                        theme: 'dark',
+                        y: {
+                            formatter: function (val) {
+                                return val + " / 100"
+                            }
+                        }
+                    },
+                    grid: {
+                        borderColor: '#374151'
+                    }
+                };
+
+                const chart = new ApexCharts(document.querySelector("#diag-chart"), options);
+                chart.render();
+            }
+        });
+    </script>
+</body>
+</html>
